@@ -1,8 +1,11 @@
 import { useState } from 'react'
 import { useMyTasksContext } from '../../hooks/useTaskContext'
+import { useAuthContext } from '../../hooks/useAuthContext'
+
 
 const AddTask = () => {
     const { dispatch } = useMyTasksContext()
+    const { user } = useAuthContext()
 
     const [title, setTitle] = useState('')
     const [error, setError] = useState(null)
@@ -10,13 +13,19 @@ const AddTask = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
 
+        if (!user) {
+          setError('You must be logged in')
+          return
+        }
+
         const task = { title }
 
         const response = await fetch('http://localhost:5000/api/myTasks', {
             method: 'POST',
             body: JSON.stringify(task),
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${user.token}`
             }
         })
         const json = await response.json()
@@ -39,6 +48,7 @@ const AddTask = () => {
         onChange={(e) => setTitle(e.target.value)}
         value= {title} />
         <button type="submit">Add Task</button>
+        {error && <div className="error">{error}</div>}
       </form>
     </div>
   );

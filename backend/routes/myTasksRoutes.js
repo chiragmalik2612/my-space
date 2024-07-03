@@ -1,7 +1,12 @@
 const express = require('express');
 const { createTask, getTask, getTasks, deleteTask, updateTask } = require('../controllers/myTasksController');
+const requireAuth = require('../middlewares/requireAuth');
 
 const router = express.Router();
+
+
+//Middleware to check if user is authenticated
+router.use(requireAuth);
 
 
 //GET all tasks

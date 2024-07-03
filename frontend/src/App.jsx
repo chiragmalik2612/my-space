@@ -1,38 +1,38 @@
-import { Route, Routes, Outlet } from "react-router-dom";
+import {  Route, Routes, Navigate } from "react-router-dom";
+import { useAuthContext } from './hooks/useAuthContext'
 import Divider from "@mui/material/Divider";
 import "./App.css";
 import Navbar from "./components/Navbar";
-import Home from "./pages/Home/Home";
+import Home from "./pages/Home";
 import MyTasks from "./pages/MyTasks/MyTasks";
-import MyMusic from "./pages/MyMusic/MyMusic";
-import MyExpense from "./pages/MyExpense/MyExpense";
-import MyMovies from "./pages/MyMovies/MyMovies";
-import MyGallery from "./pages/MyGallery/MyGallery";
-import MyBooks from "./pages/MyBooks/MyBooks";
 import Footer from "./components/Footer";
-import { MyTasksContextProvider } from "./context/MyTasksContext";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
 
 function App() {
+  const { user } = useAuthContext()
+
   return (
     <>
-      <Navbar />
-      <Outlet />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route
-          path="/tasks"
-          element={
-            <MyTasksContextProvider>
-              <MyTasks />
-            </MyTasksContextProvider>
-          }
-        />
-        <Route path="/music" element={<MyMusic />} />
-        <Route path="/expense" element={<MyExpense />} />
-        <Route path="/movies" element={<MyMovies />} />
-        <Route path="/gallery" element={<MyGallery />} />
-        <Route path="/books" element={<MyBooks />} />
-      </Routes>
+      <div className="App">
+        <Navbar />
+        <div className="pages">
+          <Routes>
+            <Route 
+              path="/" 
+              element={user ? <Home /> : <Navigate to="/login" />} 
+            />
+            <Route 
+              path="/login" 
+              element={!user ? <Login /> : <Navigate to="/" />} 
+            />
+            <Route 
+              path="/signup" 
+              element={!user ? <Signup /> : <Navigate to="/" />} 
+            />
+          </Routes>
+        </div>
+    </div>
       <Divider variant="middle" />
       <Footer />
     </>

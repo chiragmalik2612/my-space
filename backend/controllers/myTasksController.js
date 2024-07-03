@@ -3,8 +3,10 @@ const mongoose = require('mongoose')
 
 // get all tasks
 const getTasks = async (req, res) => {
+  const user_id = req.user._id;
+
   try {
-    const tasks = await Task.find({}).sort({ createdAt: -1 });
+    const tasks = await Task.find({user_id}).sort({ createdAt: -1 });
     console.log('Fetched tasks:', tasks); 
     res.status(200).json(tasks);
   } catch (error) {
@@ -12,7 +14,6 @@ const getTasks = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch tasks' });
   }
 };
-
 
 // get a single task
 const getTask = async (req, res) => {
@@ -41,7 +42,8 @@ const createTask = async (req, res) => {
 
   // add to the database
   try {
-    const task = await Task.create({ title })
+    const user_id = req.user._id
+    const task = await Task.create({ title, user_id})
     res.status(200).json(task)
   } catch (error) {
     res.status(400).json({ error: error.message })
